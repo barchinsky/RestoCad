@@ -1,0 +1,3 @@
+<root>
+	<sellers><seller><id>1</id><login>max</login><pass>pass</pass><products><product><id>2</id><name>icecream2</name><price>1.5</price><product_number>100</product_number></product></products></seller></sellers>
+</root>
