@@ -19,14 +19,16 @@ from lxml import etree
 class DB_Manager:
     def __init__(self):
         
-        self._seller_db = '../db/SELLER_DB_TEST.xml'
+        self._seller_db = '../db/DB_TEST.xml'
 
-    def create_seller_db(self):
+    def create_db(self):
         db=open(self._seller_db,'w')
         
         root = ET.Element("root")
 
         sellers = ET.SubElement(root,"sellers")
+        customers = ET.SubElement(root,"customers")
+        restorators = ET.SubElement(root,"restorators")
         db.write( minidom.parseString(ET.tostring(root)).toprettyxml() )
 
     def remove_seller(self,seller_id):
@@ -77,6 +79,9 @@ class DB_Manager:
             if seller.find('id').text == str(id):
                 return False
         return True
+
+    def find_user_for_authorization(self,user_type, login, password):
+        pass
 
     def add_product(self,seller_id,product_id,product_name,product_price,product_number):
         db = ET.parse(self._seller_db)
@@ -132,6 +137,9 @@ class DB_Manager:
             print "Error.Bad db structure. Product not removed."
             return 0
 
+    def modify_product_data(self, seler_id, product_id, attribute_to_modify, value):
+        pass
+
     def make_pretty(self):
         warnings.warn("This option is unsafe. Don't use it if you don't know what happend.")
         answer = raw_input("Do you want to continue?(y/n)")
@@ -182,11 +190,12 @@ class DB_Manager:
 
 if __name__ == "__main__":
     dbm = DB_Manager()
-    #dbm.remove_seller(2)
-    dbm.add_seller(1,"max","pass")
-    dbm.add_product(seller_id=1,product_id=2,product_name='icecream2',product_price='1.5', product_number=100)
+    #dbm.create_db()
+    #dbm.remove_seller(1)
+    #dbm.add_seller(1,"max","pass")
+    #dbm.add_product(seller_id=1,product_id=2,product_name='icecream2',product_price='1.5', product_number=100)
 
     #dbm.make_pretty()
-    seller = dbm.get_seler_product_list(1)
-    print seller
+    #seller = dbm.get_seler_product_list(1)
+    #print seller
     #dbm.remove_product(seller_id=1,product_name='icecream2')
