@@ -67,6 +67,24 @@ class DB_Manager:
         else:
             print "There is already seller with the same id.\nSeller not added."
 
+    def add_customer(self,customer_id,login,password):
+        db = ET.parse(self._seller_db)
+        root = db.getroot()
+
+        _customers = root.find('customers')
+
+        _customer = ET.SubElement(_customers,"customer")
+        _id = ET.SubElement(_customer,'id')
+        _id.text = str(customer_id)
+        _login = ET.SubElement(_customer,'login')
+        _login.text = login
+        _password = ET.SubElement(_customer,'pass')
+        _password.text = password
+        
+        db.write(self._seller_db)
+
+
+
     def check_seller_unique(self,id):
         '''
         Check if seller attended to register has unique attributes.
@@ -81,7 +99,19 @@ class DB_Manager:
         return True
 
     def find_user_for_authorization(self,user_type, login, password):
-        pass
+        infile = open(self._seller_db,'r')
+        data = infile.read()
+
+        root = ET.fromstring(data)
+
+        for group in root:
+            print group
+            for child in group:
+                print child
+                if child.find('login').text == login and child.find('pass').text == password:
+                    print "Found!"
+                    return True
+        return False
 
     def add_product(self,seller_id,product_id,product_name,product_price,product_number):
         db = ET.parse(self._seller_db)
@@ -193,9 +223,12 @@ if __name__ == "__main__":
     #dbm.create_db()
     #dbm.remove_seller(1)
     #dbm.add_seller(1,"max","pass")
+    #dbm.add_customer(0,'test_customer','pass')
     #dbm.add_product(seller_id=1,product_id=2,product_name='icecream2',product_price='1.5', product_number=100)
 
     #dbm.make_pretty()
     #seller = dbm.get_seler_product_list(1)
     #print seller
     #dbm.remove_product(seller_id=1,product_name='icecream2')
+
+    dbm.find_user_for_authorization('seller','max','pass')
