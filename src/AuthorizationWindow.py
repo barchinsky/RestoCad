@@ -34,7 +34,7 @@ class AuthorizationWindow(QWidget):
 
     @pyqtSlot()
     def test(self):
-        print "AuthorizationWindow::Ok!"
+        print "AuthorizationWindow::test"
 
     @pyqtSlot()
     def validate(self):
@@ -42,9 +42,14 @@ class AuthorizationWindow(QWidget):
         Validate authorization data.
         '''
         print str(self.login_edit.text()), str(self.pass_edit.text())
-        if self.dbm.find_user_for_authorization('seller',str(self.login_edit.text()), str(self.pass_edit.text()) ):
+        print self.user_type_map[self.user_type] 
+        if self.dbm.find_user_for_authorization(self.user_type_map[self.user_type],str(self.login_edit.text()), str(self.pass_edit.text()) ):
             print "Authorization successfull."
             self.show_info("Authorization successfull. Welcome!")
+            self.close()
+        else:
+            print "Authorization failed."
+            self.show_info("Authoriztion failed. Please, check your login or password.")
             self.close()
 
     def validate_seller(self):

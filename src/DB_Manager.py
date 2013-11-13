@@ -99,18 +99,20 @@ class DB_Manager:
         return True
 
     def find_user_for_authorization(self,user_type, login, password):
+        print "Find user for authorization."
         infile = open(self._seller_db,'r')
         data = infile.read()
+        infile.close()
 
         root = ET.fromstring(data)
 
-        for group in root:
-            print group
-            for child in group:
-                print child
-                if child.find('login').text == login and child.find('pass').text == password:
-                    print "Found!"
-                    return True
+        user_group = root.find(user_type+'s')
+
+        for user in user_group:
+            print 'User:',user
+            if user.find('login').text == login and user.find('pass').text == password:
+                print "Found!"
+                return True
         return False
 
     def add_product(self,seller_id,product_id,product_name,product_price,product_number):

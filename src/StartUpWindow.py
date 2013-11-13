@@ -2,6 +2,7 @@
 
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
+import sys
 
 from AuthorizationWindow import AuthorizationWindow
 
@@ -68,6 +69,7 @@ class StartUpWindow(QWidget):
         msgBox.setText(str(e))
         msgBox.setStandardButtons(QMessageBox.Ok)
         ret = msgBox.exec_();
+        sys.exit()
 
     @pyqtSlot()
     def enable(self):
