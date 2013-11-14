@@ -5,6 +5,7 @@ from PyQt4.QtCore import *
 import sys
 
 from AuthorizationWindow import AuthorizationWindow
+from RegistrationWindow import RegistrationWindow
 
 class StartUpWindow(QWidget):
     def __init__(self,parent):
@@ -56,6 +57,11 @@ class StartUpWindow(QWidget):
 
         if action_type == 1:
             print "Registration called."
+            self.reg_window = RegistrationWindow(user_type)
+            self.connect(self.reg_window.ok_btn, SIGNAL("clicked()"),SLOT("enable()"))
+            self.connect(self.reg_window.close_btn, SIGNAL("clicked()"),SLOT("enable()"))
+            self.setDisabled(1)
+            self.reg_window.show()
         elif action_type == 0:
             print "Authorization called."
             self.auth_window = AuthorizationWindow(user_type)

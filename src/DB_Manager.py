@@ -1,11 +1,5 @@
 #!/usr/bin/env python
 
-'''
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    Need to define logic for installation system at external system.
-!!!!!!!!!!!!!!!!!!!!
-'''
-
 import sys
 
 sys.path.append("/home/max/Documents/personal_stuff/study/RestoCad/")
@@ -47,8 +41,7 @@ class DB_Manager:
         #db.write( minidom.parseString(ET.tostring(root)).toprettyxml() )
         db.write(self._seller_db) 
 
-    def add_seller(self,seller_id,login,password):
-        if self.check_seller_unique(seller_id):
+    def add_seller(self,login,password):
             db = ET.parse(self._seller_db)
             root = db.getroot()
 
@@ -56,7 +49,6 @@ class DB_Manager:
 
             _seller = ET.SubElement(_sellers,"seller")
             _id = ET.SubElement(_seller,'id')
-            _id.text = str(seller_id)
             _login = ET.SubElement(_seller,'login')
             _login.text = login
             _password = ET.SubElement(_seller,'pass')
@@ -64,10 +56,8 @@ class DB_Manager:
             _products = ET.SubElement(_seller,'products')
      
             db.write(self._seller_db)
-        else:
-            print "There is already seller with the same id.\nSeller not added."
 
-    def add_customer(self,customer_id,login,password):
+    def add_customer(self,login,password):
         db = ET.parse(self._seller_db)
         root = db.getroot()
 
@@ -75,7 +65,6 @@ class DB_Manager:
 
         _customer = ET.SubElement(_customers,"customer")
         _id = ET.SubElement(_customer,'id')
-        _id.text = str(customer_id)
         _login = ET.SubElement(_customer,'login')
         _login.text = login
         _password = ET.SubElement(_customer,'pass')
@@ -84,17 +73,36 @@ class DB_Manager:
         db.write(self._seller_db)
 
 
+    def add_restorator(self,login,password):
+        db = ET.parse(self._seller_db)
+        root = db.getroot()
 
-    def check_seller_unique(self,id):
+        _restorators = root.find('restorators')
+
+        _restorator = ET.SubElement(_restorators,"restorator")
+        _id = ET.SubElement(_restorator,'id')
+        _login = ET.SubElement(_restorator,'login')
+        print login
+        _login.text = login
+        _password = ET.SubElement(_restorator,'pass')
+        _password.text = password
+        
+        db.write(self._seller_db)
+
+    def check_unique(self,user_type,user_name):
         '''
         Check if seller attended to register has unique attributes.
         '''
+        print "Check unique method."
+        print user_type,user_name
+
         db = ET.parse(self._seller_db)
         root = db.getroot()
-        sellers = root.find('sellers')
+        user_group = root.find(user_type+'s')
 
-        for seller in sellers:
-            if seller.find('id').text == str(id):
+        for user in user_group:
+            if user.find('login').text == user_name:
+                print "There is such user in system."
                 return False
         return True
 
@@ -224,8 +232,8 @@ if __name__ == "__main__":
     dbm = DB_Manager()
     #dbm.create_db()
     #dbm.remove_seller(1)
-    #dbm.add_seller(1,"max","pass")
-    #dbm.add_customer(0,'test_customer','pass')
+    #dbm.add_seller("max","pass")
+    #dbm.add_customer('test_customer','pass')
     #dbm.add_product(seller_id=1,product_id=2,product_name='icecream2',product_price='1.5', product_number=100)
 
     #dbm.make_pretty()
@@ -233,4 +241,5 @@ if __name__ == "__main__":
     #print seller
     #dbm.remove_product(seller_id=1,product_name='icecream2')
 
-    dbm.find_user_for_authorization('seller','max','pass')
+    #dbm.find_user_for_authorization('seller','max','pass')
+    #dbm.check_unique("seller","max2")
