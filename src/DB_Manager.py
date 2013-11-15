@@ -41,53 +41,26 @@ class DB_Manager:
         #db.write( minidom.parseString(ET.tostring(root)).toprettyxml() )
         db.write(self._seller_db) 
 
-    def add_seller(self,login,password):
+
+    def add_user(self,user_type,login,password):
+        try:
             db = ET.parse(self._seller_db)
             root = db.getroot()
 
-            _sellers = root.find('sellers')
+            _user_group = root.find(user_type+'s')
+            print _user_group
+            print user_type
+            _user = ET.SubElement(_user_group,user_type)
+            print _user
 
-            _seller = ET.SubElement(_sellers,"seller")
-            _id = ET.SubElement(_seller,'id')
-            _login = ET.SubElement(_seller,'login')
+            _login = ET.SubElement(_user,'login')
             _login.text = login
-            _password = ET.SubElement(_seller,'pass')
+            _password = ET.SubElement(_user,'pass')
             _password.text = password
-            _products = ET.SubElement(_seller,'products')
-     
+
             db.write(self._seller_db)
-
-    def add_customer(self,login,password):
-        db = ET.parse(self._seller_db)
-        root = db.getroot()
-
-        _customers = root.find('customers')
-
-        _customer = ET.SubElement(_customers,"customer")
-        _id = ET.SubElement(_customer,'id')
-        _login = ET.SubElement(_customer,'login')
-        _login.text = login
-        _password = ET.SubElement(_customer,'pass')
-        _password.text = password
-        
-        db.write(self._seller_db)
-
-
-    def add_restorator(self,login,password):
-        db = ET.parse(self._seller_db)
-        root = db.getroot()
-
-        _restorators = root.find('restorators')
-
-        _restorator = ET.SubElement(_restorators,"restorator")
-        _id = ET.SubElement(_restorator,'id')
-        _login = ET.SubElement(_restorator,'login')
-        print login
-        _login.text = login
-        _password = ET.SubElement(_restorator,'pass')
-        _password.text = password
-        
-        db.write(self._seller_db)
+        except Exception,e:
+            print "DB_Manager::add_user()::"str(e)
 
     def check_unique(self,user_type,user_name):
         '''
@@ -245,3 +218,5 @@ if __name__ == "__main__":
 
     #dbm.find_user_for_authorization('seller','max','pass')
     #dbm.check_unique("seller","max2")
+    #dbm.add_user("customer","max3","test")
+    #dbm.add_user('restorator','r1','r1234')
