@@ -60,7 +60,7 @@ class DB_Manager:
 
             db.write(self._seller_db)
         except Exception,e:
-            print "DB_Manager::add_user()::"str(e)
+            print "DB_Manager::add_user()::"+str(e)
 
     def check_unique(self,user_type,user_name):
         '''
