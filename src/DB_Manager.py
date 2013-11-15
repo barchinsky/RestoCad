@@ -25,18 +25,18 @@ class DB_Manager:
         restorators = ET.SubElement(root,"restorators")
         db.write( minidom.parseString(ET.tostring(root)).toprettyxml() )
 
-    def remove_seller(self,seller_id):
+    def remove_user(self,user_group,user_login):
         db = ET.parse(self._seller_db)
         root = db.getroot()
+        user_group = root.find(user_group+'s')
 
-        for item in root.findall('sellers'):
-            for seller in item:
-                #print seller
-                id = seller.find('id').text
-                #print id
-                if id == str(seller_id):
-                    print "Record with id:%s will be removed"%str(seller_id)
-                    item.remove(seller)
+        for user in user_group:
+            print "User:",user
+            login = user.find('login').text
+            print login
+            if login == str(user_login):
+                print "Record with login:%s will be removed"%str(user_login)
+                user_group.remove(user)
 
         #db.write( minidom.parseString(ET.tostring(root)).toprettyxml() )
         db.write(self._seller_db) 
@@ -104,6 +104,8 @@ class DB_Manager:
             if user.find('login').text == user_name:
                 print "There is such user in system."
                 return False
+
+        print "User is unique."
         return True
 
     def find_user_for_authorization(self,user_type, login, password):
@@ -231,7 +233,7 @@ class DB_Manager:
 if __name__ == "__main__":
     dbm = DB_Manager()
     #dbm.create_db()
-    #dbm.remove_seller(1)
+    #dbm.remove_user('customer','test_customer')
     #dbm.add_seller("max","pass")
     #dbm.add_customer('test_customer','pass')
     #dbm.add_product(seller_id=1,product_id=2,product_name='icecream2',product_price='1.5', product_number=100)
