@@ -4,10 +4,13 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
 from DB_Manager import DB_Manager
+from CustomerMainWindow import CustomerMainWindow
 
 class AuthorizationWindow(QWidget):
     def __init__(self, user_type):
         super(AuthorizationWindow,self).__init__()
+
+        self.setWindowTitle("Authoriazation")
 
         self.dbm = DB_Manager()
         self.user_type_map = {0:"restorator",1:"seller",2:"customer"}
@@ -29,6 +32,8 @@ class AuthorizationWindow(QWidget):
 
         self.setLayout(self.layout)
 
+        self.customer_mw = CustomerMainWindow()
+
         self.connect(self.ok_btn,SIGNAL("clicked()"),self,SLOT("test()"))
         self.connect(self.ok_btn,SIGNAL("clicked()"), self, SLOT("validate()"))
 
@@ -46,20 +51,16 @@ class AuthorizationWindow(QWidget):
         if self.dbm.find_user_for_authorization(self.user_type_map[self.user_type],str(self.login_edit.text()), str(self.pass_edit.text()) ):
             print "Authorization successfull."
             self.show_info("Authorization successfull. Welcome!")
+            
+            if self.user_type == 2:
+                print "Starting customer main window"
+                self.customer_mw.show()
+            
             self.close()
         else:
             print "Authorization failed."
             self.show_info("Authoriztion failed. Please, check your login or password.")
             self.close()
-
-    def validate_seller(self):
-        pass
-    
-    def validate_customer(self):
-        pass
-
-    def validate_restorator(self):
-        pass
 
     def show_info(self,e):
         msgBox = QMessageBox()
