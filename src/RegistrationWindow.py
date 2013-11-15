@@ -56,12 +56,13 @@ class RegistrationWindow(QWidget):
         print "user_name",user_name,"user_pass",user_pass
         
         if self.dbm.check_unique(self.user_type_map[self.user_type],user_name):
-            if self.user_type == 0:
-                self.dbm.add_restorator(user_name,user_pass)
-            elif self.user_type == 1:
-                self.dbm.add_seller(user_name,user_pass)
-            else:
-                self.dbm.add_customer(user_name,user_pass)
+            #if self.user_type == 0:
+            #    self.dbm.add_restorator(user_name,user_pass)
+            #elif self.user_type == 1:
+            #    self.dbm.add_seller(user_name,user_pass)
+            #else:
+            #    self.dbm.add_customer(user_name,user_pass)
+            self.dbm.add_user(self.user_type_map[self.user_type],user_name,user_pass)
             self.show_info("Registration successfull.")
             self.close()
         else:
