@@ -72,10 +72,8 @@ class CustomerMainWindow(QWidget):
     def clean_menu_combo(self):
         print "Clean combo"
         print (self.menu_l_c.count())
-        for i in range(self.menu_l_c.count()+1):
-            print i
-            self.menu_l_c.removeItem(i)
-            print "After removing:" + str(self.menu_l_c.count())
+        self.menu_l_c.clear()
+        print "After removing:" + str(self.menu_l_c.count())
 
     def load_location(self,restoran):
         pass
