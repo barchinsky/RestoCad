@@ -62,7 +62,7 @@ class DB_Manager:
         except Exception,e:
             print "DB_Manager::add_user()::"+str(e)
 
-    def add_restorator(self,login,password,restoran_name,restoran_location):
+    def add_restorator(self,login,password,restoran_name,restoran_location, places_count):
         db = ET.parse(self._seller_db)
         root = db.getroot()
  
@@ -78,6 +78,8 @@ class DB_Manager:
         _restoran_name.text = restoran_name
         _restoran_location = ET.SubElement(_restorator,'restoran_location')
         _restoran_location.text = restoran_location
+        _places_count = ET.SubElement(_restorator,'places_count')
+        _places_count.text = places_count
         
         db.write(self._seller_db)
 
@@ -193,7 +195,7 @@ class DB_Manager:
         else:
             print "Good decsision. Bye!"
 
-    def get_seler_product_list(self, seller_id):
+    def get_seller_product_list(self, seller_id):
         product_list = {}
         infile = open(self._seller_db,'r')
         data = infile.read()
@@ -222,6 +224,27 @@ class DB_Manager:
         print "Finished."
         return product_list
 
+    def get_restoran_list(self):
+        restoran_list = []
+        data = ""
+
+        with open(self._seller_db,'r') as f:
+            data = f.read()
+            f.close()
+        
+        root = ET.fromstring(data)
+
+        restorators = root.find("restorators")
+
+        if restorators is not None:
+            for restorator in restorators:
+                restoran_list.append( restorator.find("restoran_name").text )
+        else:
+            print "No restoran found."
+            return False
+        return restoran_list
+            
+
 if __name__ == "__main__":
     dbm = DB_Manager()
     #dbm.create_db()
@@ -239,3 +262,4 @@ if __name__ == "__main__":
     #dbm.check_unique("seller","max2")
     #dbm.add_user("customer","max3","test")
     #dbm.add_user('restorator','r1','r1234')
+    print dbm.get_restoran_list()
