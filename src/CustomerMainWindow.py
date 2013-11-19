@@ -69,14 +69,21 @@ class CustomerMainWindow(QWidget):
         for dish in menu:
             self.menu_l_c.addItem(dish)
 
+        self.set_location(restoran)
+
+
+
     def clean_menu_combo(self):
         print "Clean combo"
         print (self.menu_l_c.count())
         self.menu_l_c.clear()
         print "After removing:" + str(self.menu_l_c.count())
 
-    def load_location(self,restoran):
-        pass
+    def set_location(self,restoran):
+        location = self.dbm.get_restoran_location(restoran)
+        print restoran
+        print location
+        self.restoran_location_e.setText(location)
 
         
 
