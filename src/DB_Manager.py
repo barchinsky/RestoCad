@@ -62,6 +62,25 @@ class DB_Manager:
         except Exception,e:
             print "DB_Manager::add_user()::"+str(e)
 
+    def add_restorator(self,login,password,restoran_name,restoran_location):
+        db = ET.parse(self._seller_db)
+        root = db.getroot()
+ 
+        _restorators = root.find('restorators')
+        _restorator = ET.SubElement(_restorators,"restorator")
+        _id = ET.SubElement(_restorator,'id')
+        _login = ET.SubElement(_restorator,'login')
+        print login
+        _login.text = login
+        _password = ET.SubElement(_restorator,'pass')
+        _password.text = password
+        _restoran_name = ET.SubElement(_restorator,'restoran_name')
+        _restoran_name.text = restoran_name
+        _restoran_location = ET.SubElement(_restorator,'restoran_location')
+        _restoran_location.text = restoran_location
+        
+        db.write(self._seller_db)
+
     def check_unique(self,user_type,user_name):
         '''
         Check if seller attended to register has unique attributes.

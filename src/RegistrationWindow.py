@@ -15,32 +15,39 @@ class RegistrationWindow(QWidget):
         super(RegistrationWindow,self).__init__()
 
         self.dbm = DB_Manager()
-        self.user_type_map = {0:"restorator",1:"seller",2:"customer"}
-        self.user_type = user_type
-
-        self.name_lbl = QLabel("Enter name:")
-        self.name_e = QLineEdit()
-        self.pass_lbl = QLabel("Enter pass:")
-        self.pass_e = QLineEdit()
-        #self.user_type_lbl = QLabel("Choose user type:")
-        #self.user_type_combo = QComboBox()
-        
-        #self.user_type_combo.addItem("restorator")
-        #self.user_type_combo.addItem("seller")
-        #self.user_type_combo.addItem("customer")
 
         self.ok_btn = QPushButton("Register")
         self.close_btn = QPushButton("Close")
 
-        self.layout = QGridLayout()
-        self.layout.addWidget(self.name_lbl)
-        self.layout.addWidget(self.name_e)
-        self.layout.addWidget(self.pass_lbl)
-        self.layout.addWidget(self.pass_e)
+        if user_type == 0:
+            self.user_type_map = {0:"restorator",1:"seller",2:"customer"}
+            self.user_type = user_type
+
+            self.name_lbl = QLabel("Enter name:")
+            self.name_e = QLineEdit()
+            self.pass_lbl = QLabel("Enter pass:")
+            self.restoran_name_lbl = QLabel("Restoran name:")
+            self.restoran_name_e = QLineEdit()
+            self.restoran_location_lbl = QLabel("Restoran location:")
+            self.restoran_location_e = QLineEdit()
+            self.pass_e = QLineEdit()
+
+            #self.ok_btn = QPushButton("Register")
+            #self.close_btn = QPushButton("Close")
+
+            self.layout = QGridLayout()
+            self.layout.addWidget(self.name_lbl)
+            self.layout.addWidget(self.name_e)
+            self.layout.addWidget(self.pass_lbl)
+            self.layout.addWidget(self.pass_e)
+            self.layout.addWidget(self.restoran_name_lbl)
+            self.layout.addWidget(self.restoran_name_e)
+            self.layout.addWidget(self.restoran_location_lbl)
+            self.layout.addWidget(self.restoran_location_e)
+
+
         self.layout.addWidget(self.ok_btn)
         self.layout.addWidget(self.close_btn)
-        #self.layout.addWidget(self.user_type_lbl)
-        #self.layout.addWidget(self.user_type_combo)
 
         self.setLayout(self.layout)
 
@@ -56,15 +63,15 @@ class RegistrationWindow(QWidget):
         print "user_name",user_name,"user_pass",user_pass
         
         if self.dbm.check_unique(self.user_type_map[self.user_type],user_name):
-            #if self.user_type == 0:
-            #    self.dbm.add_restorator(user_name,user_pass)
+            if self.user_type == 0:
+                self.dbm.add_restorator(user_name, user_pass, str(self.restoran_name_e.text() ), str(self.restoran_location_e.text() ) )
+                self.show_info("Registration successfull.")
             #elif self.user_type == 1:
             #    self.dbm.add_seller(user_name,user_pass)
-            #else:
-            #    self.dbm.add_customer(user_name,user_pass)
-            self.dbm.add_user(self.user_type_map[self.user_type],user_name,user_pass)
-            self.show_info("Registration successfull.")
-            self.close()
+            else:
+                self.dbm.add_user(self.user_type_map[self.user_type],user_name,user_pass)
+                self.show_info("Registration successfull.")
+                self.close()
         else:
             self.show_info("Registration failed. Enter another user name.")
 
