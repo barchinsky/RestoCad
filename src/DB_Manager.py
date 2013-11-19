@@ -243,6 +243,15 @@ class DB_Manager:
             print "No restoran found."
             return False
         return restoran_list
+    
+    def get_restoran_menu(self,restoran):
+        print "Fake method"
+        if restoran == "The one":
+            return ["dish1","dish2"]
+        else:
+            return ["dish3","dish4"]
+ 
+    
             
 
 if __name__ == "__main__":
