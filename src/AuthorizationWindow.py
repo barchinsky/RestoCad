@@ -17,6 +17,7 @@ class AuthorizationWindow(QWidget):
         self.user_type = user_type
         
         self.ok_btn = QPushButton("Ok")
+        self.cancel_btn = QPushButton("Cancel")
         self.login_lable = QLabel("Login:")
         self.login_edit = QLineEdit()
         self.pass_lable = QLabel("Password:")
@@ -29,13 +30,14 @@ class AuthorizationWindow(QWidget):
         self.layout.addWidget(self.pass_lable)
         self.layout.addWidget(self.pass_edit)
         self.layout.addWidget(self.ok_btn)
+        self.layout.addWidget(self.cancel_btn)
 
         self.setLayout(self.layout)
 
         self.customer_mw = CustomerMainWindow()
 
-        self.connect(self.ok_btn,SIGNAL("clicked()"),self,SLOT("test()"))
         self.connect(self.ok_btn,SIGNAL("clicked()"), self, SLOT("validate()"))
+        self.connect(self.cancel_btn,SIGNAL("clicked()"),self,SLOT("close()"))
 
     @pyqtSlot()
     def test(self):
@@ -67,7 +69,3 @@ class AuthorizationWindow(QWidget):
         msgBox.setText(str(e))
         msgBox.setStandardButtons(QMessageBox.Ok)
         ret = msgBox.exec_();
-
-
-
-          
