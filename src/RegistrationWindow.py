@@ -59,7 +59,6 @@ class RegistrationWindow(QWidget):
         self.connect(self.close_btn,SIGNAL("clicked()"),self,SLOT("close()"))
         self.connect(self.ok_btn,SIGNAL("clicked()"), self,SLOT("register()"))
 
-
     @pyqtSlot()
     def register(self):
         print "RegistrationWindow::register::user_type",self.user_type
@@ -69,10 +68,9 @@ class RegistrationWindow(QWidget):
         
         if self.dbm.check_unique(self.user_type_map[self.user_type],user_name):
             if self.user_type == 0:
-                self.dbm.add_restorator(user_name, user_pass, str(self.restoran_name_e.text() ), str(self.restoran_location_e.text() ) )
+                self.dbm.add_restorator(user_name, user_pass, str(self.restoran_name_e.text() ), str(self.restoran_location_e.text() ), str(self.places_count_e.text()) )
                 self.show_info("Registration successfull.")
-            #elif self.user_type == 1:
-            #    self.dbm.add_seller(user_name,user_pass)
+                self.close()
             else:
                 self.dbm.add_user(self.user_type_map[self.user_type],user_name,user_pass)
                 self.show_info("Registration successfull.")
@@ -85,4 +83,3 @@ class RegistrationWindow(QWidget):
         msgBox.setText(str(e))
         msgBox.setStandardButtons(QMessageBox.Ok)
         ret = msgBox.exec_()
-        #sys.exit()

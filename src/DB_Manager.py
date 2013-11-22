@@ -247,7 +247,7 @@ class DB_Manager:
     
     def get_restoran_menu(self,restoran):
         print "Fake method"
-        if restoran == "The one":
+        if restoran == "The One":
             return ["dish1","dish2"]
         else:
             return ["dish3","dish4"]
