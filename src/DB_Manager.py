@@ -13,10 +13,10 @@ from lxml import etree
 class DB_Manager:
     def __init__(self):
         
-        self._seller_db = '../db/DB_TEST.xml'
+        self._database = '../db/DB_TEST.xml'
 
     def create_db(self):
-        db=open(self._seller_db,'w')
+        db=open(self._database,'w')
         
         root = ET.Element("root")
 
@@ -26,7 +26,7 @@ class DB_Manager:
         db.write( minidom.parseString(ET.tostring(root)).toprettyxml() )
 
     def remove_user(self,user_group,user_login):
-        db = ET.parse(self._seller_db)
+        db = ET.parse(self._database)
         root = db.getroot()
         user_group = root.find(user_group+'s')
 
@@ -39,12 +39,12 @@ class DB_Manager:
                 user_group.remove(user)
 
         #db.write( minidom.parseString(ET.tostring(root)).toprettyxml() )
-        db.write(self._seller_db) 
+        db.write(self._database) 
 
 
     def add_user(self,user_type,login,password):
         try:
-            db = ET.parse(self._seller_db)
+            db = ET.parse(self._database)
             root = db.getroot()
 
             _user_group = root.find(user_type+'s')
@@ -58,12 +58,12 @@ class DB_Manager:
             _password = ET.SubElement(_user,'pass')
             _password.text = password
 
-            db.write(self._seller_db)
+            db.write(self._database)
         except Exception,e:
             print "DB_Manager::add_user()::"+str(e)
 
     def add_restorator(self,login,password,restoran_name,restoran_location, places_count):
-        db = ET.parse(self._seller_db)
+        db = ET.parse(self._database)
         root = db.getroot()
  
         _restorators = root.find('restorators')
@@ -79,9 +79,10 @@ class DB_Manager:
         _restoran_location = ET.SubElement(_restorator,'restoran_location')
         _restoran_location.text = restoran_location
         _places_count = ET.SubElement(_restorator,'places_count')
+        _grade = ET.SubElement(_restorator,'grade')
         _places_count.text = places_count
         
-        db.write(self._seller_db)
+        db.write(self._database)
 
     def check_unique(self,user_type,user_name):
         '''
@@ -90,7 +91,7 @@ class DB_Manager:
         print "Check unique method."
         print user_type,user_name
 
-        db = ET.parse(self._seller_db)
+        db = ET.parse(self._database)
         root = db.getroot()
         user_group = root.find(user_type+'s')
 
@@ -104,7 +105,7 @@ class DB_Manager:
 
     def find_user_for_authorization(self,user_type, login, password):
         print "Find user for authorization."
-        infile = open(self._seller_db,'r')
+        infile = open(self._database,'r')
         data = infile.read()
         infile.close()
 
@@ -120,7 +121,7 @@ class DB_Manager:
         return False
 
     def add_product(self,seller_id,product_id,product_name,product_price,product_number):
-        db = ET.parse(self._seller_db)
+        db = ET.parse(self._database)
 
         root = db.getroot()
 
@@ -141,7 +142,7 @@ class DB_Manager:
                     _product_price.text = product_price
                     _product_number_to_sell = ET.SubElement(_product,'product_number')
                     _product_number_to_sell.text = str(product_number)
-                    db.write(self._seller_db)
+                    db.write(self._database)
         else:
             print 'No section section "sellers" in db. Can not add product. Check db structure.'
 
@@ -150,7 +151,7 @@ class DB_Manager:
         Remove product from seler db.
         '''
         print "Remove method called."
-        db = ET.parse(self._seller_db)
+        db = ET.parse(self._database)
 
         root = db.getroot()
 
@@ -180,7 +181,7 @@ class DB_Manager:
         warnings.warn("This option is unsafe. Don't use it if you don't know what happend.")
         answer = raw_input("Do you want to continue?(y/n)")
         if answer == 'y':
-            infile = open(self._seller_db,'r')
+            infile = open(self._database,'r')
             data = infile.read()
             print data
             infile.close()
@@ -188,7 +189,7 @@ class DB_Manager:
             root = etree.fromstring(data) # or xml.dom.minidom.parseString(xml_string)
             print etree.tostring(root,pretty_print=True)
 
-            pretty_db = open(self._seller_db+str(int(time.time())),'w')
+            pretty_db = open(self._database+str(int(time.time())),'w')
             pretty_db.write("")
             pretty_db.close()
             print "DB pretty print done."
@@ -197,7 +198,7 @@ class DB_Manager:
 
     def get_seller_product_list(self, seller_id):
         product_list = {}
-        infile = open(self._seller_db,'r')
+        infile = open(self._database,'r')
         data = infile.read()
         infile.close()
 
@@ -228,7 +229,7 @@ class DB_Manager:
         restoran_list = []
         data = ""
 
-        with open(self._seller_db,'r') as f:
+        with open(self._database,'r') as f:
             data = f.read()
             f.close()
         
@@ -250,6 +251,48 @@ class DB_Manager:
             return ["dish1","dish2"]
         else:
             return ["dish3","dish4"]
+
+    def get_restoran_location(self,restoran):
+        data = self.get_db()
+
+        root = ET.fromstring(data)
+
+        restorators = root.find("restorators")
+
+        if restorators is not None:
+            for restorator in restorators:
+                if restorator.find("restoran_name").text == restoran:
+                    return ( restorator.find("restoran_location").text )
+        else:
+            return None
+
+    def get_restoran_grade(self,restoran_name):
+        data = self.get_db()
+
+        root = ET.fromstring(data)
+
+        restorators = root.find("restorators")
+
+        if restorators is not None:
+            for restorator in restorators:
+                if restorator.find("restoran_name").text == restoran_name:
+                    return restorator.find("grade").text if restorator.find("grade").text is not None else 0 
+
+    def set_restoran_grade(self,restoran,grade,visit_date="test_date"):
+        data = self.get_db()
+
+        root = ET.fromstring(data)
+
+        restorators = root.find("restorators")
+
+        for restorator in restorators:
+            if restorator.find("restoran_name").text == restoran_name:
+                restoran.find("grade").text = str( int(restoran.find("grade").text) + int(grade) ) # update grade
+
+    def get_db(self):
+        with open(self._database) as f:
+            return f.read()
+
  
     
             
@@ -271,4 +314,4 @@ if __name__ == "__main__":
     #dbm.check_unique("seller","max2")
     #dbm.add_user("customer","max3","test")
     #dbm.add_user('restorator','r1','r1234')
-    print dbm.get_restoran_list()
+    #print dbm.get_restoran_list()

@@ -71,8 +71,6 @@ class CustomerMainWindow(QWidget):
 
         self.set_location(restoran)
 
-
-
     def clean_menu_combo(self):
         print "Clean combo"
         print (self.menu_l_c.count())
