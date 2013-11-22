@@ -40,36 +40,48 @@ class CustomerMainWindow(QWidget):
 
         self.setLayout(self.layout)
 
-        self.connect(self.logout_btn,SIGNAL("clicked()"),self,SLOT("close()"))
-        self.connect(self.order_btn,SIGNAL("clicked()"),self,SLOT("order()"))
-        self.connect(self.restoran_list,SIGNAL("currentIndexChanged(int)"),self, SLOT("load_restoran_menu()") )
-
+        self.connect(self.logout_btn,SIGNAL("clicked()"),self,SLOT("close()")) # logout when logout button clicked
+        self.connect(self.order_btn,SIGNAL("clicked()"),self,SLOT("order()")) # call order() when button order clicked
+        self.connect(self.restoran_list,SIGNAL("currentIndexChanged(int)"),self, SLOT("update()") ) # update form according to the new restoran
+ 
     @pyqtSlot()
     def order(self):
         print "CustomerWindow::order()::Order called"
+        pass
 
-    def load(self):
+    @pyqtSlot()
+    def update(self): # update form data
+        restoran = str(self.restoran_list.currentText())
+        self.load_restoran_menu(restoran) # loads restoran menu
+        self.set_rate(restoran) # show choosen restoran rate
+        self.set_location(restoran)
+
+    def load(self): # loads form data
         self.load_restoran_list()
-        #self.load_restoran_menu()
+        restoran = str(self.restoran_list.currentText())
+        self.load_restoran_menu(restoran) # loads restoran menu
+        self.set_rate(restoran) # show choosen restoran rate
+        self.set_location(restoran)
 
-    def load_restoran_list(self):
+    def load_restoran_list(self): # loads restoran list from db
+        self.restoran_list.clear()
         restoran_list = self.dbm.get_restoran_list()
 
         for restoran in restoran_list:
             self.restoran_list.addItem(restoran)
 
     @pyqtSlot()
-    def load_restoran_menu(self):
+    def load_restoran_menu(self,restoran): # load restoran menu
         print "Load menu called."
         self.clean_menu_combo()
-        restoran = str(self.restoran_list.currentText())
+        #restoran = str(self.restoran_list.currentText())
         menu = self.dbm.get_restoran_menu(restoran)
         print "current text: %s"%(restoran)
 
         for dish in menu:
             self.menu_l_c.addItem(dish)
 
-        self.set_location(restoran)
+        #self.set_location(restoran)
 
     def clean_menu_combo(self):
         print "Clean combo"
@@ -79,11 +91,7 @@ class CustomerMainWindow(QWidget):
 
     def set_location(self,restoran):
         location = self.dbm.get_restoran_location(restoran)
-        print restoran
-        print location
         self.restoran_location_e.setText(location)
 
-        
-
-
-
+    def set_rate(self,restoran):
+        self.restoran_rate_e.setText( str( self.dbm.get_restoran_grade(restoran) ) )
