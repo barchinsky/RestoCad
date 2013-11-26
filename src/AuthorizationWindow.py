@@ -5,6 +5,7 @@ from PyQt4.QtCore import *
 
 from DB_Manager import DB_Manager
 from CustomerMainWindow import CustomerMainWindow
+from SellerMainWindow import SellerMainWindow
 
 class AuthorizationWindow(QWidget):
     def __init__(self, user_type):
@@ -35,6 +36,7 @@ class AuthorizationWindow(QWidget):
         self.setLayout(self.layout)
 
         self.customer_mw = CustomerMainWindow()
+        self.seller_mw = SellerMainWindow()
 
         self.connect(self.ok_btn,SIGNAL("clicked()"), self, SLOT("validate()"))
         self.connect(self.cancel_btn,SIGNAL("clicked()"),self,SLOT("close()"))
@@ -57,6 +59,10 @@ class AuthorizationWindow(QWidget):
             if self.user_type == 2:
                 print "Starting customer main window"
                 self.customer_mw.show()
+            elif self.user_type == 1:
+                print "Starting seller main window"
+                self.seller_mw = SellerMainWindow( str(self.login_edit.text()) )
+                self.seller_mw.show()
             
             self.close()
         else:
