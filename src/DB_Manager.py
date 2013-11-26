@@ -300,8 +300,6 @@ class DB_Manager:
             for restorator in restorators:
                 if restorator.find("restoran_name").text == restoran:
                     return restorator.find("places_count").text if int( restorator.find("places_count").text ) > 0 else 0 
-                    print "olo"
-                    return "Olo"
   
     def update_free_places(self,restoran,op=0):
         db = ET.parse(self._database)
