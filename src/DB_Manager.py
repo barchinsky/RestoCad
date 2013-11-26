@@ -121,31 +121,33 @@ class DB_Manager:
                 return True
         return False
 
-    def add_product(self,seller_id,product_id,product_name,product_price,product_number):
-        db = ET.parse(self._database)
+    def add_product(self,seller_name,product_name,product_price,product_number):
+        try:
+            print "DB_Manager::add_product()"
+            db = ET.parse(self._database)
 
-        root = db.getroot()
+            root = db.getroot()
 
-        sellers = root.find('sellers')
+            sellers = root.find('sellers')
 
-        if sellers is not None:
-            for seller in sellers:
-                id = seller.find('id').text
-                if str(seller_id) == id:
-                    print "Required seller found. Adding product to product list."
-                    _products = seller.find('products')
-                    _product = ET.SubElement(_products,'product')
-                    _product_id = ET.SubElement(_product,'id')
-                    _product_id.text=str(product_id)
-                    _product_name = ET.SubElement(_product,'name')
-                    _product_name.text = product_name
-                    _product_price = ET.SubElement(_product,'price')
-                    _product_price.text = product_price
-                    _product_number_to_sell = ET.SubElement(_product,'product_number')
-                    _product_number_to_sell.text = str(product_number)
-                    db.write(self._database)
-        else:
-            print 'No section section "sellers" in db. Can not add product. Check db structure.'
+            if sellers is not None:
+                for seller in sellers:
+                    id = seller.find('login').text
+                    if str(seller_name) == str(id):
+                        print "Required seller found. Adding product to product list."
+                        _products = seller.find('products')
+                        _product = ET.SubElement(_products,'product')
+                        _product_name = ET.SubElement(_product,'name')
+                        _product_name.text = product_name
+                        _product_price = ET.SubElement(_product,'price')
+                        _product_price.text = product_price
+                        _product_number_to_sell = ET.SubElement(_product,'product_number')
+                        _product_number_to_sell.text = str(product_number)
+                        db.write(self._database)
+            else:
+                print 'No section section "sellers" in db. Can not add product. Check db structure.'
+        except Exception,e:
+            print "DB_Manager::add_product::Exception:%s"%str(e)
 
     def remove_product(self,seller_id,product_name):
         '''
@@ -156,9 +158,9 @@ class DB_Manager:
 
         root = db.getroot()
 
-        sellers = root.find('sellers')
-        print sellers
-        print sellers.findall('seller')
+        #sellers = root.find('sellers')
+        #print sellers
+        sellers.findall('seller')
 
         if sellers is not None:
             for seller in sellers:
@@ -197,8 +199,8 @@ class DB_Manager:
         else:
             print "Good decsision. Bye!"
 
-    def get_seller_product_list(self, seller_id):
-        product_list = {}
+    def get_seller_product_list(self, seller_name):
+        product_list = []
         infile = open(self._database,'r')
         data = infile.read()
         infile.close()
@@ -208,23 +210,26 @@ class DB_Manager:
         sellers = root.find('sellers')
 
         for seller in sellers:
-            if seller.find('id').text == str(seller_id):
-                id = seller.find('id').text
+            if seller.find('login').text == str(seller_name):
+                id = seller.find('login').text
                 print "Required seller found: id=%s.\nProcessing data..."%id
 
                 products = seller.find('products')
 
                 for product in products:
-                    product_id = product.find('id').text
                     product_name = product.find('name').text
                     product_price = product.find('price').text
                     product_number = product.find('product_number').text
 
-                    product_list[product_name] = (product_id,product_price,product_number)
+                    #product_list[product_name] = (product_id,product_price,product_number)
+                    product_list.append(product_name)
 
-                    print 10*"-", '\n',product_id,product_name,product_price,product_number, '\n',10*"-"
+                    print 10*"-", '\n',product_name,product_price,product_number, '\n',10*"-"
         print "Finished."
         return product_list
+
+    def is_seller_product_exists(self):
+        return False
 
     def get_restoran_list(self):
         restoran_list = []
@@ -317,14 +322,9 @@ class DB_Manager:
 
         db.write(self._database)
 
-
     def get_db(self):
         with open(self._database) as f:
             return f.read()
-
- 
-    
-            
 
 if __name__ == "__main__":
     dbm = DB_Manager()
@@ -332,7 +332,7 @@ if __name__ == "__main__":
     #dbm.remove_user('customer','test_customer')
     #dbm.add_seller("max","pass")
     #dbm.add_customer('test_customer','pass')
-    #dbm.add_product(seller_id=1,product_id=2,product_name='icecream2',product_price='1.5', product_number=100)
+    dbm.add_product("s1",product_name='icecream',product_price='1.5', product_number=100)
 
     #dbm.make_pretty()
     #seller = dbm.get_seler_product_list(1)
