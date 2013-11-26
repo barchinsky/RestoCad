@@ -122,12 +122,17 @@ class DB_Manager:
         return False
 
     def add_product(self,seller_name,product_name,product_price,product_number):
+        '''
+        Adding product to seller db
+        '''
+#
+# Need to define logig for updating data if product already exists in db
+#
+#
         try:
             print "DB_Manager::add_product()"
             db = ET.parse(self._database)
-
             root = db.getroot()
-
             sellers = root.find('sellers')
 
             if sellers is not None:
@@ -135,15 +140,17 @@ class DB_Manager:
                     id = seller.find('login').text
                     if str(seller_name) == str(id):
                         print "Required seller found. Adding product to product list."
-                        _products = seller.find('products')
-                        _product = ET.SubElement(_products,'product')
-                        _product_name = ET.SubElement(_product,'name')
-                        _product_name.text = product_name
-                        _product_price = ET.SubElement(_product,'price')
-                        _product_price.text = product_price
-                        _product_number_to_sell = ET.SubElement(_product,'product_number')
-                        _product_number_to_sell.text = str(product_number)
-                        db.write(self._database)
+                        if seller is not None:
+                            _products = ET.SubElement(seller,'products')
+                            _product = ET.SubElement(_products,'product')
+                            _product_name = ET.SubElement(_product,'name')
+                            _product_name.text = product_name
+                            _product_price = ET.SubElement(_product,'price')
+                            _product_price.text = product_price
+                            _product_number_to_sell = ET.SubElement(_product,'product_number')
+                            _product_number_to_sell.text = str(product_number)
+                            db.write(self._database)
+                            print "Product successfully added."
             else:
                 print 'No section section "sellers" in db. Can not add product. Check db structure.'
         except Exception,e:

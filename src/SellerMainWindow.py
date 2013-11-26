@@ -65,8 +65,6 @@ class SellerMainWindow(QWidget):
         self.connect(self.manage_products_btn,SIGNAL("clicked()"), self, SLOT("call_manage_product_widget()"))
         self.connect(self.close_btn,SIGNAL("clicked()"),self,SLOT("close()"))
 
-        #self.add_product_widget = AddProductWidget()
-
         self.load()
 
     @pyqtSlot()
