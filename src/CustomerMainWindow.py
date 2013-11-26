@@ -16,7 +16,9 @@ class CustomerMainWindow(QWidget):
         self.menu_l_c = QComboBox()
         self.restoran_location_lbl = QLabel("Restoran location:")
         self.restoran_location_e = QLineEdit()
-        self.order_btn = QPushButton("Order!")
+        self.free_place_count_lbl = QLabel("Free places:")
+        self.free_place_count_e = QLineEdit()
+        self.order_btn = QPushButton("Order place!")
         self.restoran_rate_lbl = QLabel("Restoran rate:")
         self.restoran_rate_e = QLineEdit()
         self.rate_btn = QPushButton("Rate!") # shows window for restoran rate
@@ -32,6 +34,8 @@ class CustomerMainWindow(QWidget):
         self.layout.addWidget(self.menu_l_c)
         self.layout.addWidget(self.restoran_location_lbl)
         self.layout.addWidget(self.restoran_location_e)
+        self.layout.addWidget(self.free_place_count_lbl)
+        self.layout.addWidget(self.free_place_count_e)
         self.layout.addWidget(self.order_btn)
         self.layout.addWidget(self.restoran_rate_lbl)
         self.layout.addWidget(self.restoran_rate_e)
@@ -43,11 +47,16 @@ class CustomerMainWindow(QWidget):
         self.connect(self.logout_btn,SIGNAL("clicked()"),self,SLOT("close()")) # logout when logout button clicked
         self.connect(self.order_btn,SIGNAL("clicked()"),self,SLOT("order()")) # call order() when button order clicked
         self.connect(self.restoran_list,SIGNAL("currentIndexChanged(int)"),self, SLOT("update()") ) # update form according to the new restoran
+        self.connect(self.rate_btn,SIGNAL("clicked()"),self,SLOT("rate()"))
  
     @pyqtSlot()
     def order(self):
+        restoran = str(self.restoran_list.currentText())
         print "CustomerWindow::order()::Order called"
-        pass
+
+        self.dbm.update_free_places(restoran)
+        self.update()
+        #if self.
 
     @pyqtSlot()
     def update(self): # update form data
@@ -55,6 +64,7 @@ class CustomerMainWindow(QWidget):
         self.load_restoran_menu(restoran) # loads restoran menu
         self.set_rate(restoran) # show choosen restoran rate
         self.set_location(restoran)
+        self.load_free_places(restoran)
 
     def load(self): # loads form data
         self.load_restoran_list()
@@ -62,6 +72,7 @@ class CustomerMainWindow(QWidget):
         self.load_restoran_menu(restoran) # loads restoran menu
         self.set_rate(restoran) # show choosen restoran rate
         self.set_location(restoran)
+        self.load_free_places(restoran)
 
     def load_restoran_list(self): # loads restoran list from db
         self.restoran_list.clear()
@@ -69,6 +80,10 @@ class CustomerMainWindow(QWidget):
 
         for restoran in restoran_list:
             self.restoran_list.addItem(restoran)
+
+    def load_free_places(self,restoran):
+        self.free_place_count_e.clear()
+        self.free_place_count_e.setText( self.dbm.get_free_places_number(restoran) )
 
     @pyqtSlot()
     def load_restoran_menu(self,restoran): # load restoran menu
@@ -82,6 +97,14 @@ class CustomerMainWindow(QWidget):
             self.menu_l_c.addItem(dish)
 
         #self.set_location(restoran)
+
+    @pyqtSlot()
+    def rate(self):
+        print "rate::rate()"
+        restoran = str(self.restoran_list.currentText())
+        print "rate::Restoran:%s"%restoran
+        grade = str(self.restoran_rate_e.text())
+        self.dbm.set_restoran_grade(restoran,grade)
 
     def clean_menu_combo(self):
         print "Clean combo"
