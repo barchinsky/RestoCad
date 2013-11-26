@@ -80,6 +80,7 @@ class DB_Manager:
         _restoran_location.text = restoran_location
         _places_count = ET.SubElement(_restorator,'places_count')
         _grade = ET.SubElement(_restorator,'grade')
+        _grade.text = '0'
         _places_count.text = places_count
         
         db.write(self._database)
@@ -266,28 +267,58 @@ class DB_Manager:
         else:
             return None
 
-    def get_restoran_grade(self,restoran_name):
+    def get_restoran_grade(self,restoran):
         data = self.get_db()
-
         root = ET.fromstring(data)
-
         restorators = root.find("restorators")
 
         if restorators is not None:
             for restorator in restorators:
-                if restorator.find("restoran_name").text == restoran_name:
+                if restorator.find("restoran_name").text == restoran:
                     return restorator.find("grade").text if restorator.find("grade").text is not None else 0 
 
     def set_restoran_grade(self,restoran,grade,visit_date="test_date"):
-        data = self.get_db()
-
-        root = ET.fromstring(data)
+        db = ET.parse(self._database)
+        root = db.getroot()
 
         restorators = root.find("restorators")
 
         for restorator in restorators:
-            if restorator.find("restoran_name").text == restoran_name:
-                restoran.find("grade").text = str( int(restoran.find("grade").text) + int(grade) ) # update grade
+            if restorator.find("restoran_name").text == restoran:
+                print "Current restoran grade:", restorator.find("grade").text #= str( int(restoran.find("grade").text) + int(grade) ) # update grade
+                restorator.find("grade").text = str( int(restorator.find("grade").text) + int(grade) ) # update grade
+
+        db.write(self._database)
+
+    def get_free_places_number(self,restoran):
+        print "get_free_places_number::name goted%s"%restoran
+        data = self.get_db()
+        root = ET.fromstring(data)
+        restorators = root.find("restorators")
+
+        if restorators is not None:
+            for restorator in restorators:
+                if restorator.find("restoran_name").text == restoran:
+                    return restorator.find("places_count").text if int( restorator.find("places_count").text ) > 0 else 0 
+                    print "olo"
+                    return "Olo"
+  
+    def update_free_places(self,restoran,op=0):
+        db = ET.parse(self._database)
+        root = db.getroot()
+
+        restorators = root.find("restorators")
+
+        for restorator in restorators:
+            if restorator.find("restoran_name").text == restoran:
+                print "Restoran found!"
+                if op: # increase place count
+                    restorator.find("places_count").text = str( int(restorator.find("places_count").text) + 1 )
+                else: # decrease
+                    restorator.find("places_count").text = str( int(restorator.find("places_count").text) - 1 )
+
+        db.write(self._database)
+
 
     def get_db(self):
         with open(self._database) as f:
