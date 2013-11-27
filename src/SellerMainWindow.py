@@ -38,6 +38,19 @@ class AddProductWidget(QWidget):
     def add(self):
         self.parent.add_product(str(self.product_name_e.text()), str(self.product_price_e.text()), str(self.product_number_e.text()))
         self.close()
+
+class ClientViewWidget(QWidget):
+    def __init__(self):
+        super(ClientViewWidget,self).__init__()
+
+        self.table = QTableWidget()
+        self.table.setRowCount(2)
+        self.table.setColumnCount(3)
+
+        self.layout = QGridLayout()
+
+        self.layout.addWidget(self.table)
+        self.setLayout(self.layout)
         
 
 class SellerMainWindow(QWidget):
@@ -45,18 +58,22 @@ class SellerMainWindow(QWidget):
         super(SellerMainWindow,self).__init__()
         print "Seller main window started. User:%s"%_seller_login
         self.dbm = DB_Manager()
-        self.product_combo = QComboBox()
+        self.product_sold_lbl = QLabel("Product sold:")
+        self.product_sold_e = QLineEdit()
         self.add_product_btn = QPushButton("Add product")
         self.close_btn = QPushButton("Close")
         self.manage_products_btn = QPushButton("Manage products")
         self.seller_login = _seller_login
+        self.goto_client_list_btn = QPushButton("View clients")
 
         self.layout = QGridLayout()
 
-        self.layout.addWidget(self.product_combo)
+        self.layout.addWidget(self.product_sold_lbl)
+        self.layout.addWidget(self.product_sold_e)
         self.layout.addWidget(self.add_product_btn)
         self.layout.addWidget(self.manage_products_btn)
         self.layout.addWidget(self.add_product_btn)
+        self.layout.addWidget(self.goto_client_list_btn)
         self.layout.addWidget(self.close_btn)
 
         self.setLayout(self.layout)
@@ -64,6 +81,7 @@ class SellerMainWindow(QWidget):
         self.connect(self.add_product_btn,SIGNAL("clicked()"),self,SLOT("call_add_product_widget()"))
         self.connect(self.manage_products_btn,SIGNAL("clicked()"), self, SLOT("call_manage_product_widget()"))
         self.connect(self.close_btn,SIGNAL("clicked()"),self,SLOT("close()"))
+        self.connect(self.goto_client_list_btn,SIGNAL("clicked()"),self,SLOT("call_clients_widget()"))
 
         self.load()
 
@@ -72,6 +90,12 @@ class SellerMainWindow(QWidget):
         print "SellerMainWindow::call_add_product_widget()"
         self.add_product_widget = AddProductWidget(self)
         self.add_product_widget.show()
+        pass
+    @pyqtSlot()
+    def call_clients_widget(self):
+        print "SellerMainWindow::call_clients_widget()"
+        self.cl_table = ClientViewWidget()
+        self.cl_table.show()
         pass
 
     def load(self):
